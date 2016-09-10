@@ -1,0 +1,9 @@
+extends layout
+block content
+  h1= title
+  a(href= url)= "Get permissions" 
+  if emails
+      h5 #{emails.length} emails loaded
+      ul
+          each email in emails
+              li= email
