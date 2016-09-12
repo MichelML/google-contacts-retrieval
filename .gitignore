@@ -48,3 +48,5 @@ tmp/**/*
 # jenev
 jenēv
 
+# environment variables
+.env
