@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 app.get('/oauth2callback', (req, res) => {
     var code = req.query.code;
-    var Emails;
+    var Persons = [];
     var pageRenderer = new EventEmitter();
     gapi.client.getToken(code, (err, tokens) => {
         gapi.client.setCredentials(tokens);
@@ -59,9 +59,9 @@ app.get('/oauth2callback', (req, res) => {
                         persons += data;
                     });
                     res.on('end', () => {
-                        persons = JSON.parse(persons);
-                        Emails = persons.connections.filter(person => person.emailAddresses)
-                            .map(person2 => person2.emailAddresses[0].value);
+                        Persons = JSON.parse(persons).connections
+                                                     .filter(person => person.emailAddresses)
+                                                     .map((person) =>  { return {name: (person.names) ? person.names[0].displayName : '', email:person.emailAddresses[0].value};});
                         pageRenderer.emit('emailsReady');
                     });
                     res.on('error', () => {
@@ -74,7 +74,7 @@ app.get('/oauth2callback', (req, res) => {
             var locals = {
                 title: 'My sample app',
                 url: gapi.url,
-                emails: Emails
+                persons: Persons
             };
             res.render('index.jade', locals);
         });

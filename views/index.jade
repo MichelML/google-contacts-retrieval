@@ -2,9 +2,11 @@ extends layout
 block content
   h1= title
   a(href= url)= "Get permissions" 
-  if emails
-      h5 #{emails.length} emails loaded
-      ul
-          each email in emails
-                li
-                    span= email
+  if persons
+      h5 #{persons.length} persons loaded
+      each person in persons
+          if person.name
+              h4= person.name
+          else
+              h4 unknown name
+          li= person.email
