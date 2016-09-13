@@ -2,6 +2,10 @@ extends layout
 block content
   h1= appName
   h1= title
+  if me
+      h4 name: #{me.name}
+      img(src="#{me.image}")
+      h4 email: #{me.email}
   a(href= url)= "Get permissions" 
   if persons
       h5 #{persons.length} persons loaded
