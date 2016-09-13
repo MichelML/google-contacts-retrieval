@@ -21,6 +21,8 @@ if (process.env.NODE_ENV === 'development') {
     app.use(errorhandler());
 }
 
+app.locals.appName = 'My App';
+
 app.use(morgan('combined'));
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -46,12 +48,20 @@ app.get('/oauth2callback', (req, res) => {
             () => {
                 gapi.google.plus('v1').people.get({
                     userId: 'me',
+                    params: {fields: ['emails','displayName','image']},
                     auth: gapi.client
                 }, (err, response) => {
                     // handle err and response
                     if (err) console.log(err);
-                    else console.log(response);
-                });
+                    else {
+                        console.log(response);
+                        app.locals.me = {
+                            name: response.displayName,
+                            image: (response.image && response.image.url) ? response.image.url : '',
+                            email: response.emails[0].value
+                        };
+                    }
+                }); 
                 simpleGet('https://people.googleapis.com/v1/people/me/connections?pageSize=500&requestMask.includeField=person.email_addresses%2Cperson.names&access_token=' + tokens.access_token, (err, res) => {
                     if (err) throw err;
                     var persons = '';
